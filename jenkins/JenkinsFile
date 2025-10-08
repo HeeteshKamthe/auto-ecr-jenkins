@@ -50,10 +50,11 @@ pipeline {
             export AWS_ACCESS_KEY_ID=$AWS_ID
             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET
             aws lambda invoke \
-              --function-name ${LAMBDA_FUNCTION} \
-              --payload "{ \\"repository\\": \\"${ECR_REPO_NAME}\\", \\"tag\\": \\"${IMAGE_TAG}\\" }" \
-              --region ${AWS_REGION} \
-              response.json
+          --function-name ecr-postprocessor \
+          --payload '{"repository":"sample-app-repo","tag":"'"${COMMIT}"'"}' \
+          --cli-binary-format raw-in-base64-out \
+          --region ${AWS_REGION} \
+          response.json
             echo "Lambda Triggered for Tag: ${IMAGE_TAG}"
           '''
         }
