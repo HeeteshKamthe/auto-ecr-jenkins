@@ -6,7 +6,7 @@ pipeline {
     AWS_ACCOUNT = '715841372170'
     ECR_REPO_NAME = 'sample-app-repo'
     ECR_URL = "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}"
-    LAMBDA_FUNCTION = 'ecrpostprocessor'   // Name of your Lambda function
+    LAMBDA_FUNCTION = 'ecr-postprocessor'   // Name of your Lambda function
   }
 
   stages {
