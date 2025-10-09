@@ -56,17 +56,22 @@ sequenceDiagram
 
 
 ### 🧠 Flow Summary
+<div align="center">
+  
+| Step | Action                   | Description                |
+| ---- | ------------------------ | -------------------------- |
+| 1️⃣  | Create ECR repository    | Store Docker images        |
+| 2️⃣  | Prepare application code | Node.js + Dockerfile       |
+| 3️⃣  | Configure Jenkins        | Build & push Docker image  |
+| 4️⃣  | Create Lambda function   | Log and notify             |
+| 5️⃣  | Create DynamoDB + SNS    | Store & send notifications |
+| 6️⃣  | Create EventBridge rule  | Trigger Lambda on push     |
+| 7️⃣  | Trigger & verify         | Confirm CI/CD flow         |
 
-| Step | Action | Description |
-|------|---------|-------------|
-| 1️⃣ | Create ECR repository | Store Docker images |
-| 2️⃣ | Prepare application code | Node.js + Dockerfile |
-| 3️⃣ | Configure Jenkins | Build & push Docker image |
-| 4️⃣ | Create Lambda function | Log and notify |
-| 5️⃣ | Create DynamoDB + SNS | Store & send notifications |
-| 6️⃣ | Create EventBridge rule | Trigger Lambda on push |
-| 7️⃣ | Trigger & verify | Confirm CI/CD flow |
+</div>
+
 ---
+
 ### 1️⃣ Go to AWS Console → ECR → Create repository
 
   1. Name: `sample-app-repo`
@@ -707,14 +712,14 @@ Together, both parts complete the *Automated Docker Image Deployment to Amazon E
 
 
 ### ✅ Benefits
-
+<div align="center">
 | **Feature**  | **Benefit**                              |
 | ------------ | ---------------------------------------- |
 | Reproducible | All AWS infrastructure defined as code   |
 | Scalable     | Works across regions and environments    |
 | Safe         | Version control with rollback capability |
 | Automated    | No manual AWS Console setup required     |
-
+</div>
 ---
 
 ### 📈 Future Enhancements
@@ -731,6 +736,7 @@ Together, both parts complete the *Automated Docker Image Deployment to Amazon E
 
 ### 📜 Summary
 
+<div align="center">
 | **Component**   | **Function**                             |
 | --------------- | ---------------------------------------- |
 | **GitHub**      | Stores source code                       |
@@ -741,7 +747,7 @@ Together, both parts complete the *Automated Docker Image Deployment to Amazon E
 | **Lambda**      | Logs actions and sends notifications     |
 | **DynamoDB**    | Stores image metadata                    |
 | **SNS**         | Sends notifications                      |
-
+</div>
 ---
 ## 🧑‍💻 Author
 
