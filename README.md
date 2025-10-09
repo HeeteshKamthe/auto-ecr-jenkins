@@ -9,14 +9,20 @@ You can set it up in two ways:
 
 ---
 
+
 ## 🎯 Objective
 Automate the workflow where every code push:
 
-- 🏗️ Builds a Docker image in Jenkins  
-- 📦 Pushes it to Amazon ECR  
-- ⚡ Triggers AWS Lambda via EventBridge  
-- 🗃️ Logs image details in DynamoDB  
-- 📧 Sends notifications through SNS  
+- 🏗️ Builds a Docker image in Jenkins
+  
+- 📦 Pushes it to Amazon ECR
+  
+- ⚡ Triggers AWS Lambda via EventBridge
+   
+- 🗃️ Logs image details in DynamoDB
+  
+- 📧 Sends notifications through SNS
+  
 
 ---
 
@@ -43,7 +49,11 @@ sequenceDiagram
   Lambda->>SNS: Notify success
 ```
 ---
-## 🧩 PART 1: Manual AWS Setup (No Terraform)
+
+
+# 🧩 PART 1: Manual AWS Setup (No Terraform)
+
+
 
 ### 🧠 Flow Summary
 
@@ -59,9 +69,9 @@ sequenceDiagram
 ---
 ### 1️⃣ Go to AWS Console → ECR → Create repository
 
-  1. Name: sample-app-repo
+  1. Name: `sample-app-repo`
 
-  2. Tag mutability: Mutable
+  2. Tag mutability: `Mutable`
 
   3. Enable scan on push (optional)
 
@@ -130,7 +140,7 @@ CMD ["node", "index.js"]
 
 
 
-#### 🔹 Install Plugins
+### 🔹 Install Plugins
 
   - Docker plugin
 
@@ -142,7 +152,7 @@ CMD ["node", "index.js"]
 
 
 
-#### 🔹 Add Credentials
+### 🔹 Add Credentials
 
   - Type: Username with password
 
@@ -155,7 +165,7 @@ CMD ["node", "index.js"]
 
 
 
-#### 🔹 Jenkinsfile
+### 🔹 Jenkinsfile
 
 ##### jenkins/Jenkinsfile
 
@@ -302,21 +312,27 @@ def lambda_handler(event, context):
 
 ---
 
-🧩 PART 2: Terraform Setup (Infrastructure as Code)
-📁 Folder Structure
+## 🧩 PART 2: Terraform Setup (Infrastructure as Code)
+### 📁 Folder Structure
+
+```css
 terraform/
 ├─ main.tf
 ├─ variables.tf
 ├─ outputs.tf
 └─ lambda/
    └─ ecr_postprocessor.py
+```
 
-⚙️ main.tf
+---
+
+### ⚙️ main.tf
+```hcl
 provider "aws" {
   region = var.region
 }
 
-# 1️⃣ ECR Repository
+# 1️ ECR Repository
 resource "aws_ecr_repository" "sample_repo" {
   name = var.ecr_repo_name
   image_tag_mutability = "MUTABLE"
@@ -325,7 +341,7 @@ resource "aws_ecr_repository" "sample_repo" {
   }
 }
 
-# 2️⃣ DynamoDB Table
+# 2️ DynamoDB Table
 resource "aws_dynamodb_table" "image_log" {
   name         = var.ddb_table_name
   billing_mode = "PAY_PER_REQUEST"
@@ -337,7 +353,7 @@ resource "aws_dynamodb_table" "image_log" {
   }
 }
 
-# 3️⃣ SNS Topic
+# 3️ SNS Topic
 resource "aws_sns_topic" "image_push_topic" {
   name = var.sns_topic_name
 }
@@ -348,7 +364,7 @@ resource "aws_sns_topic_subscription" "email_sub" {
   endpoint  = var.notification_email
 }
 
-# 4️⃣ Lambda Function
+# 4️ Lambda Function
 resource "aws_iam_role" "lambda_exec_role" {
   name = "lambda_ecr_exec_role"
 
@@ -412,7 +428,7 @@ resource "aws_lambda_function" "ecr_postprocessor" {
   }
 }
 
-# 5️⃣ EventBridge Rule + Target
+# 5️ EventBridge Rule + Target
 resource "aws_cloudwatch_event_rule" "jenkins_push_rule" {
   name        = "JenkinsECRPushRule"
   description = "Triggers Lambda on Jenkins ECR Image Push"
@@ -435,8 +451,12 @@ resource "aws_lambda_permission" "allow_eventbridge" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.jenkins_push_rule.arn
 }
+```
 
-⚙️ outputs.tf
+
+
+### ⚙️ outputs.tf
+```hcl
 output "ecr_repo_url" {
   value = aws_ecr_repository.sample_repo.repository_url
 }
@@ -448,8 +468,22 @@ output "lambda_function_name" {
 output "sns_topic_arn" {
   value = aws_sns_topic.image_push_topic.arn
 }
+```
 
-⚙️ lambda/ecr_postprocessor.py
+
+### ⚙️ variables.tf
+```hcl
+variable "region" { default = "ap-southeast-2" }
+variable "ecr_repo_name" { default = "sample-app-repo" }
+variable "ddb_table_name" { default = "sample-app-image-log" }
+variable "sns_topic_name" { default = "sample-app-topic" }
+variable "lambda_name" { default = "ecr-postprocessor" }
+variable "notification_email" { default = "you@example.com" }
+```
+
+
+### ⚙️ lambda/ecr_postprocessor.py
+```python
 import json, os, boto3
 from datetime import datetime
 
@@ -479,32 +513,31 @@ def lambda_handler(event, context):
     )
 
     return {'status': 'ok'}
+```
 
-⚙️ variables.tf
-variable "region" { default = "ap-southeast-2" }
-variable "ecr_repo_name" { default = "sample-app-repo" }
-variable "ddb_table_name" { default = "sample-app-image-log" }
-variable "sns_topic_name" { default = "sample-app-topic" }
-variable "lambda_name" { default = "ecr-postprocessor" }
-variable "notification_email" { default = "you@example.com" }
 
-⚙️ Deploy Terraform
+### ⚙️ Deploy Terraform
+```bash
 cd terraform
 terraform init
 terraform apply -auto-approve
+```
 
 
-Outputs:
+### Outputs:
 
-ECR Repository URI
+  - ECR Repository URI
 
-Lambda Function Name
+  - Lambda Function Name
 
-SNS Topic ARN
+  - SNS Topic ARN
 
 Use these values in your Jenkinsfile.
 
-🧠 Optional: Jenkins Terraform Stage
+---
+
+### 🧠 Optional: Jenkins Terraform Stage
+```groovy
 stage('Terraform Deploy') {
   steps {
     dir('terraform') {
@@ -513,27 +546,33 @@ stage('Terraform Deploy') {
     }
   }
 }
+```
 
-✅ Benefits
-Feature	Benefit
-Reproducible	All AWS infra in code
-Scalable	Works across regions & environments
-Safe	Version control + rollback
-Automated	No manual AWS console setup
-📜 Summary
-Component	Function
-GitHub	Stores source code
-Jenkins	Builds Docker images & triggers events
-Docker	Containerizes the app
-ECR	Stores built images
-EventBridge	Listens for image push events
-Lambda	Logs & notifies
-DynamoDB	Stores metadata
-SNS	Sends notifications
-🧾 Deliverables
-File	Description
-Dockerfile, index.js, package.json	App files
-Jenkinsfile	CI/CD automation
-lambda/ecr_postprocessor.py	Lambda code
-terraform/*.tf	Infrastructure as code
-README.md	Documentation
+---
+
+
+### ✅ Benefits
+
+| **Feature**  | **Benefit**                              |
+| ------------ | ---------------------------------------- |
+| Reproducible | All AWS infrastructure defined as code   |
+| Scalable     | Works across regions and environments    |
+| Safe         | Version control with rollback capability |
+| Automated    | No manual AWS Console setup required     |
+
+---
+
+### 📜 Summary
+
+| **Component**   | **Function**                             |
+| --------------- | ---------------------------------------- |
+| **GitHub**      | Stores source code                       |
+| **Jenkins**     | Builds Docker images and triggers events |
+| **Docker**      | Containerizes the application            |
+| **ECR**         | Stores built images                      |
+| **EventBridge** | Listens for image push events            |
+| **Lambda**      | Logs actions and sends notifications     |
+| **DynamoDB**    | Stores image metadata                    |
+| **SNS**         | Sends notifications                      |
+
+
