@@ -712,14 +712,18 @@ Together, both parts complete the *Automated Docker Image Deployment to Amazon E
 
 
 ### ✅ Benefits
+
 <div align="center">
+  
 | **Feature**  | **Benefit**                              |
 | ------------ | ---------------------------------------- |
 | Reproducible | All AWS infrastructure defined as code   |
 | Scalable     | Works across regions and environments    |
 | Safe         | Version control with rollback capability |
 | Automated    | No manual AWS Console setup required     |
+
 </div>
+
 ---
 
 ### 📈 Future Enhancements
@@ -737,6 +741,7 @@ Together, both parts complete the *Automated Docker Image Deployment to Amazon E
 ### 📜 Summary
 
 <div align="center">
+  
 | **Component**   | **Function**                             |
 | --------------- | ---------------------------------------- |
 | **GitHub**      | Stores source code                       |
@@ -747,11 +752,12 @@ Together, both parts complete the *Automated Docker Image Deployment to Amazon E
 | **Lambda**      | Logs actions and sends notifications     |
 | **DynamoDB**    | Stores image metadata                    |
 | **SNS**         | Sends notifications                      |
+
 </div>
+
 ---
-## 🧑‍💻 Author
 
+## 🧑‍💻Author
 ### Heetesh Kamthe
-💼 DevOps | AWS | Terraform | CI/CD Automation
-
+💼 DevOps | AWS | Terraform | CI/CD Automation </br>
 📧 heeteshkamthe09@gmail.com
