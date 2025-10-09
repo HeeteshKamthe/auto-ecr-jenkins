@@ -226,6 +226,42 @@ pipeline {
 ```
 ---
 
+### 🔁 Configure GitHub Webhook
+
+To ensure Jenkins automatically triggers a new build whenever you push code to GitHub, set up a GitHub Webhook as follows:
+
+1️) Open your GitHub Repository
+
+  Go to ⚙️ Settings → Webhooks → Add Webhook
+
+
+2️) Enter Webhook Details:
+
+  - Payload URL:
+
+    ```bash 
+    http://<your-jenkins-server>:8080/github-webhook/
+    ```
+  (Replace `<your-jenkins-server>` with your actual Jenkins server public IP or domain.)
+
+  - Content type: `application/json`
+
+  - Events: Select “Just the push event.”
+
+  - Click “Add Webhook.”
+
+#### Once configured, every time you push new code to GitHub:
+
+  - The webhook triggers Jenkins
+
+  - Jenkins builds and pushes a new Docker image to ECR
+
+  - EventBridge detects the push and invokes Lambda
+
+  - Lambda logs data to DynamoDB and sends notifications via SNS
+
+---
+
 ### 4️⃣ Lambda Function
 
 - Runtime: Python 3.10
@@ -309,6 +345,21 @@ def lambda_handler(event, context):
 ✅ Lambda logs record → DynamoDB</br>
 ✅ SNS sends email → success 🎉</br>
 
+---
+## Screenshots
+
+🖼️ Jenkins Build Success
+ <p align="center"> <img src="img/" alt="Jenkins Build Success" width="800"/> </p>
+
+
+🖼️ ECR Image Uploaded
+ <p align="center"> <img src="img/" alt="ECR Image Uploaded" width="800"/> </p>
+
+🖼️ Lambda Invocation Log
+ <p align="center"> <img src="img/" alt="Lambda Invocation Log" width="800"/> </p>
+
+🖼️ SNS Email Notification
+ <p align="center"> <img src="img/" alt="SNS Email Notification" width="800"/> </p>
 
 ---
 
@@ -534,6 +585,9 @@ terraform apply -auto-approve
 
 Use these values in your Jenkinsfile.
 
+🖼️ Terraform Apply Output
+ <p align="center"> <img src="img/" alt="Terraform Apply Output" width="800"/> </p>
+
 ---
 
 ### 🧠 Optional: Jenkins Terraform Stage
@@ -550,6 +604,96 @@ stage('Terraform Deploy') {
 
 ---
 
+### 🚀 Next Steps After `terraform apply`
+
+After your Terraform deployment completes successfully, all AWS resources will be automatically created — including the ECR repository, DynamoDB table, SNS topic, Lambda function, and EventBridge rule.
+
+Now, follow the operational workflow described in *🧩 PART 1: Manual AWS Setup to complete the CI/CD pipeline configuration and verification.*
+
+---
+
+### ✅ Step-by-Step Continuation
+
+---
+
+### 1️⃣ Confirm Deployed AWS Resources
+
+Go to your AWS Management Console and verify that Terraform has provisioned the following components mentioned in PART 1:
+
+  - ECR repository
+
+  - DynamoDB table
+
+  - SNS topic and subscription
+
+  - Lambda function
+
+  - EventBridge rule
+
+These components should match the names and configuration you defined in your Terraform variables (e.g., `sample-app-repo`, `sample-app-image-log`, etc.).
+
+---
+
+### 2️⃣ Integrate with Jenkins *(Refer to PART 1, Step 3)*
+
+Now that the AWS infrastructure exists, return to *Step 3 of PART 1: Configure Jenkins.*
+
+  - Open Jenkins and configure your AWS credentials.
+
+  - Add the ECR repository URI output from Terraform to your Jenkinsfile environment variables.
+
+  - Run the Jenkins pipeline to:
+
+  - Build the Docker image
+
+  - Tag it
+
+  - Push it to ECR
+
+  - Trigger an EventBridge event
+
+---
+
+### 3️⃣ Lambda Event Trigger *(Refer to PART 1, Steps 4–6)*
+Once Jenkins pushes the Docker image to ECR, the EventBridge rule will automatically trigger the Lambda function created by Terraform.
+
+  - The Lambda function will log details (repository, image tag, timestamp) to *DynamoDB*
+
+  - It will send an email notification via *SNS*
+
+--- 
+
+### 4️⃣ Verify the End-to-End Flow (Refer to PART 1, Step 7)
+Check that each component behaves as expected:
+
+| Component       | Verification                          |
+| --------------- | ------------------------------------- |
+| **Jenkins**     | Pipeline completes successfully       |
+| **ECR**         | Image appears with correct tag        |
+| **EventBridge** | Trigger event logged                  |
+| **Lambda**      | CloudWatch shows successful execution |
+| **DynamoDB**    | New record inserted with imageTag     |
+| **SNS**         | Notification email received           |
+
+---
+
+### 5️⃣ Clean Up (Optional)
+When finished testing the pipeline, you can safely remove all resources with:
+
+```bash
+terraform destroy -auto-approve
+```
+
+---
+
+### 🧩 Reference Summary
+
+This Terraform setup fully automates the AWS infrastructure defined in *PART 1*, while *PART 1* itself explains the operational flow (application setup, Jenkins configuration, and event verification).
+Together, both parts complete the *Automated Docker Image Deployment to Amazon ECR with Jenkins and Lambda Integration pipeline*.
+
+---
+
+
 
 ### ✅ Benefits
 
@@ -559,6 +703,18 @@ stage('Terraform Deploy') {
 | Scalable     | Works across regions and environments    |
 | Safe         | Version control with rollback capability |
 | Automated    | No manual AWS Console setup required     |
+
+---
+
+### 📈 Future Enhancements
+
+🔐 Add AWS Secrets Manager for credential storage
+
+☁️ Integrate CloudWatch for monitoring Lambda metrics
+
+🧩 Add Blue-Green deployment for ECR image promotion
+
+🧠 Integrate CodeBuild & CodePipeline for full AWS-native CI/CD
 
 ---
 
@@ -575,4 +731,10 @@ stage('Terraform Deploy') {
 | **DynamoDB**    | Stores image metadata                    |
 | **SNS**         | Sends notifications                      |
 
+---
+## 🧑‍💻 Author
 
+### Heetesh Kamthe
+💼 DevOps | AWS | Terraform | CI/CD Automation
+
+📧 heeteshkamthe09@gmail.com
