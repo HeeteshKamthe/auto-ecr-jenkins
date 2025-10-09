@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 # -----------------------------
-# 1️⃣ ECR Repository
+# 1️ ECR Repository
 # -----------------------------
 resource "aws_ecr_repository" "sample_repo" {
   name = var.ecr_repo_name
@@ -14,7 +14,7 @@ resource "aws_ecr_repository" "sample_repo" {
 }
 
 # -----------------------------
-# 2️⃣ DynamoDB Table
+# 2️ DynamoDB Table
 # -----------------------------
 resource "aws_dynamodb_table" "image_log" {
   name         = var.ddb_table_name
@@ -28,7 +28,7 @@ resource "aws_dynamodb_table" "image_log" {
 }
 
 # -----------------------------
-# 3️⃣ SNS Topic
+# 3️ SNS Topic
 # -----------------------------
 resource "aws_sns_topic" "image_push_topic" {
   name = var.sns_topic_name
@@ -42,7 +42,7 @@ resource "aws_sns_topic_subscription" "email_sub" {
 }
 
 # -----------------------------
-# 4️⃣ Lambda Function
+# 4️ Lambda Function
 # -----------------------------
 resource "aws_iam_role" "lambda_exec_role" {
   name = "lambda_ecr_exec_role"
@@ -108,7 +108,7 @@ resource "aws_lambda_function" "ecr_postprocessor" {
 }
 
 # -----------------------------
-# 5️⃣ EventBridge Rule + Target
+# 5️ EventBridge Rule + Target
 # -----------------------------
 resource "aws_cloudwatch_event_rule" "jenkins_push_rule" {
   name        = "JenkinsECRPushRule"
