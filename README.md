@@ -348,19 +348,30 @@ def lambda_handler(event, context):
 ---
 ## Screenshots
 
+ 🖼️ Jenkins Configuration
+ <p align="center"> <img src="img/jenkins project config.png" alt="Jenkins Configuration" width="500"/> </p>
+
+
 🖼️ Jenkins Build Success
- <p align="center"> <img src="img/" alt="Jenkins Build Success" width="800"/> </p>
+ <p align="center"> <img src="img/jenkins success.jpg" alt="Jenkins Build Success" width="800"/> </p>
 
 
 🖼️ ECR Image Uploaded
- <p align="center"> <img src="img/" alt="ECR Image Uploaded" width="800"/> </p>
+ <p align="center"> <img src="img/ECR.jpg" alt="ECR Image Uploaded" width="800"/> </p>
+ 
 
 🖼️ Lambda Invocation Log
- <p align="center"> <img src="img/" alt="Lambda Invocation Log" width="800"/> </p>
+ <p align="center"> <img src="img/Cloudwatch.jpg" alt="Lambda Invocation Log" width="800"/> </p>
+
 
 🖼️ SNS Email Notification
- <p align="center"> <img src="img/" alt="SNS Email Notification" width="800"/> </p>
+ <p align="center"> <img src="img/gmail notification.jpg" alt="SNS Email Notification" width="800"/> </p>
 
+
+ 🖼️ DynamoDB Table Log
+ <p align="center"> <img src="img/dynamodb.jpg" alt="DynamoDB Table Log" width="800"/> </p>
+
+ 
 ---
 
 ## 🧩 PART 2: Terraform Setup (Infrastructure as Code)
@@ -586,7 +597,7 @@ terraform apply -auto-approve
 Use these values in your Jenkinsfile.
 
 🖼️ Terraform Apply Output
- <p align="center"> <img src="img/" alt="Terraform Apply Output" width="800"/> </p>
+ <p align="center"> <img src="img/terraform output.jpg" alt="Terraform Apply Output" width="800"/> </p>
 
 ---
 
